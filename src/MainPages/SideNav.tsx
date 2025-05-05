@@ -29,8 +29,8 @@ export const Nav = ({ horizontal }: { horizontal?: string })=>{
           <Link to="RoleManagement">
             <Mybtn pathname="RoleManagement" text="Role Management" />
           </Link>
-          <Link to="EditTimetable">
-            <Mybtn pathname="EditTimetable" text="Edit Timetable" />
+          <Link to="AddCourse">
+            <Mybtn pathname="AddCourse" text="Add Course" />
           </Link>
         </nav>
       </div>

@@ -11,8 +11,8 @@ export default function EditTimetable() {
   const [formData, setFormData] = React.useState({
     title: "",
     code: "",
-    start: "",
-    end: "",
+    time: "",
+    day: "",
     venue: "",
     lecturer: "",
     creditUnit: "",
@@ -74,10 +74,10 @@ export default function EditTimetable() {
                 <SelectValue placeholder="Credit Unit" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">One</SelectItem>
-                <SelectItem value="2">Two</SelectItem>
-                <SelectItem value="3">Three</SelectItem>
-                <SelectItem value="4">Four</SelectItem>
+                <SelectItem value="0">One</SelectItem>
+                <SelectItem value="1">Two</SelectItem>
+                <SelectItem value="2">Three</SelectItem>
+                <SelectItem value="3">Four</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -88,18 +88,18 @@ export default function EditTimetable() {
               </label>
               <Select
                 onValueChange={(val) =>
-                  setFormData({ ...formData, creditUnit: val })
+                  setFormData({ ...formData, day: val })
                 }
               >
                 <SelectTrigger className="w-[100%] bg-[#48a9b84f] mt-2">
                   <SelectValue placeholder="Day" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">Monday</SelectItem>
-                  <SelectItem value="2">Tuesday</SelectItem>
-                  <SelectItem value="3">Wednessday</SelectItem>
-                  <SelectItem value="4">Thursday</SelectItem>
-                  <SelectItem value="5">Friday</SelectItem>
+                  <SelectItem value="0">Monday</SelectItem>
+                  <SelectItem value="1">Tuesday</SelectItem>
+                  <SelectItem value="2">Wednessday</SelectItem>
+                  <SelectItem value="3">Thursday</SelectItem>
+                  <SelectItem value="4">Friday</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -109,7 +109,7 @@ export default function EditTimetable() {
               </label>
               <Select
                 onValueChange={(val) =>
-                  setFormData({ ...formData, creditUnit: val })
+                  setFormData({ ...formData, time: val })
                 }
               >
                 <SelectTrigger className="w-[100%] bg-[#48a9b84f] mt-2">
