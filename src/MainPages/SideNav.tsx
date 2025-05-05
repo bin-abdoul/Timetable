@@ -15,20 +15,14 @@ export default function SideNav() {
       </div>
       <div className="">
         <nav className="list-none flex flex-col gap-5  p-5 h-screen">
-          <Link to="AdminDashboard">
-          <Mybtn pathname="AdminDashboard" text="Admin Dashboard" />
+          <Link to="ReadTimetable">
+            <Mybtn pathname="ReadTimetable" unique="1" text="Read Timetable" />
           </Link>
           <Link to="RoleManagement">
-          <Mybtn pathname="RoleManagement" text="Role Management" />
+            <Mybtn pathname="RoleManagement" text="Role Management" />
           </Link>
           <Link to="EditTimetable">
-          <Mybtn pathname="EditTimetable" text="Edit Timetable" />
-          </Link>
-          <Link to="AddUser">
-            <Mybtn pathname="AddUser" text="Add User" />
-          </Link>
-          <Link to="ReadTimetable">
-          <Mybtn pathname="ReadTimetable" text="Read Timetable" />
+            <Mybtn pathname="EditTimetable" text="Edit Timetable" />
           </Link>
         </nav>
       </div>
@@ -36,13 +30,22 @@ export default function SideNav() {
   );
 }
 
-const Mybtn = ({ pathname, text }: { pathname: string; text: string }) => {
+const Mybtn = ({
+  pathname,
+  text,
+  unique,
+}: {
+  pathname: string;
+  text: string;
+  unique?: string;
+}) => {
   const location = useLocation();
   const path = location.pathname.split("/")[1];
+
   return (
     <button
       className={`${
-        path == pathname
+        path == pathname || (path == "" && unique)
           ? "bg-[#5BBAC9] text-white"
           : "bg-gray-100 hover:bg-gray-200"
       } p-2 rounded-2xl font-medium  w-[100%]`}

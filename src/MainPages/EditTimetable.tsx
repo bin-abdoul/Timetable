@@ -8,27 +8,68 @@ import {
 import React from "react";
 
 export default function EditTimetable() {
+  const [formData, setFormData] = React.useState({
+    title: "",
+    code: "",
+    start: "",
+    end: "",
+    venue: "",
+    lecturer: "",
+    creditUnit: "",
+  });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Submitting:", formData);
+  };
   return (
     <div className="flex flex-col gap-5">
       <div className="">
         <h1 className="font-bold text-3xl">Create Subject</h1>
       </div>
-      <form action="">
+      <form action="" onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-5">
-          <Inputs title="Subject Name" id="name" placeholder="Subject Name" />
+          <Inputs
+            title="Subject title"
+            id="title"
+            placeholder="Subject title"
+            value={formData.title}
+            onChange={handleChange}
+          />
 
-          <Inputs title="Course Code" id="code" placeholder="Subject Code" />
+          <Inputs
+            title="Course Code"
+            id="code"
+            placeholder="Subject Code"
+            value={formData.code}
+            onChange={handleChange}
+          />
           <Inputs
             title="Course Lecturer"
-            id="credit"
+            id="lecturer"
             placeholder="Course Lecturer"
+            value={formData.lecturer}
+            onChange={handleChange}
           />
-          <Inputs title="Subject Venue" id="type" placeholder="Subject venue" />
+          <Inputs
+            title="Subject Venue"
+            id="venue"
+            placeholder="Subject venue"
+            value={formData.venue}
+            onChange={handleChange}
+          />
           <div className="">
             <label htmlFor="" className="font-medium">
               Credit Unit
             </label>
-            <Select>
+            <Select
+              onValueChange={(val) =>
+                setFormData({ ...formData, creditUnit: val })
+              }
+            >
               <SelectTrigger className="w-[100%] bg-[#48a9b84f] mt-2">
                 <SelectValue placeholder="Credit Unit" />
               </SelectTrigger>
@@ -41,26 +82,45 @@ export default function EditTimetable() {
             </Select>
           </div>
           <div className="flex gap-5 justify-evenly">
-            <Inputs title="Start Time" id="start" type="time" />
-            <Inputs title="End Time" id="end" type="time" />
+            <Inputs
+              title="Start Time"
+              id="start"
+              type="time"
+              value={formData.start}
+              onChange={handleChange}
+            />
+            <Inputs
+              title="End Time"
+              id="end"
+              type="time"
+              value={formData.end}
+              onChange={handleChange}
+            />
           </div>
         </div>
-          <button className="bg-[#5BBAC9] hover:bg-[#48A9B8] duration-100 text-white font-bold text-2xl  p-3 w-[50%] flex justify-center mx-auto my-10 rounded-3xl">Add Course</button>
+        <button className="bg-[#5BBAC9] hover:bg-[#48A9B8] duration-100 text-white font-bold text-2xl  p-3 w-[50%] flex justify-center mx-auto my-10 rounded-3xl">
+          Add Course
+        </button>
       </form>
     </div>
   );
 }
+type InputFieldProps = {
+  title: string;
+  id: string;
+  value: string;
+  placeholder?: string;
+  type?: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+};
 const Inputs = ({
   title,
   id,
   placeholder,
   type,
-}: {
-  title: string;
-  id: string;
-  placeholder?: string;
-  type?: string;
-}) => {
+  value,
+  onChange,
+}: InputFieldProps) => {
   return (
     <div className="flex flex-col">
       <label htmlFor={id} className="font-medium text-lg">
@@ -70,6 +130,8 @@ const Inputs = ({
         id={id}
         type={type}
         name={id}
+        value={value}
+        onChange={onChange}
         className="bg-[#48a9b84f] block p-2 my-2 rounded-2xl outline-1"
         placeholder={placeholder}
       />
