@@ -6,9 +6,9 @@ import { useNavigate } from "react-router-dom";
 
 export default function RoleManagement() {
   return (
-    <div className="flex flex-col gap-5 overflow-y-auto h-screen">
+    <div className="flex flex-col gap-5">
       <h1 className="text-3xl font-bold">Members</h1>
-      <div className="flex bg-[#48a9b84f] gap-4 rounded-lg mx-2 px-4">
+      <div className="flex bg-[#48a9b84f] gap-4 rounded-lg px-4">
         <Search color="gray" size={32} className="my-auto" />
         <input
           type="search"
@@ -33,7 +33,7 @@ const Member = ({ name, role }: { name: string; role: string }) => {
    navigate("/userInfo") 
   }
   return (
-    <div className="flex justify-between hover:bg-[#48a9b84f] p-2 rounded-2xl mx-2">
+    <div className="flex justify-between hover:bg-[#48a9b84f] p-2 rounded-2xl">
       <div className="flex gap-5" onClick={goToUserInfo}>
         <div className="rounded-full size-16 bg-gray-200 flex">
           <UserRound size={32} className="m-auto" />

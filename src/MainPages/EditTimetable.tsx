@@ -33,7 +33,7 @@ export default function EditTimetable() {
       <form action="" onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-5">
           <Inputs
-            title="Subject title"
+            title="Course title"
             id="title"
             placeholder="Subject title"
             value={formData.title}
@@ -55,7 +55,7 @@ export default function EditTimetable() {
             onChange={handleChange}
           />
           <Inputs
-            title="Subject Venue"
+            title="Venue"
             id="venue"
             placeholder="Subject venue"
             value={formData.venue}
@@ -82,20 +82,48 @@ export default function EditTimetable() {
             </Select>
           </div>
           <div className="flex gap-5 justify-evenly">
-            <Inputs
-              title="Start Time"
-              id="start"
-              type="time"
-              value={formData.start}
-              onChange={handleChange}
-            />
-            <Inputs
-              title="End Time"
-              id="end"
-              type="time"
-              value={formData.end}
-              onChange={handleChange}
-            />
+            <div className="w-full">
+              <label htmlFor="" className="font-medium">
+                Day
+              </label>
+              <Select
+                onValueChange={(val) =>
+                  setFormData({ ...formData, creditUnit: val })
+                }
+              >
+                <SelectTrigger className="w-[100%] bg-[#48a9b84f] mt-2">
+                  <SelectValue placeholder="Day" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">Monday</SelectItem>
+                  <SelectItem value="2">Tuesday</SelectItem>
+                  <SelectItem value="3">Wednessday</SelectItem>
+                  <SelectItem value="4">Thursday</SelectItem>
+                  <SelectItem value="5">Friday</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="w-full">
+              <label htmlFor="" className="font-medium">
+                Time
+              </label>
+              <Select
+                onValueChange={(val) =>
+                  setFormData({ ...formData, creditUnit: val })
+                }
+              >
+                <SelectTrigger className="w-[100%] bg-[#48a9b84f] mt-2">
+                  <SelectValue placeholder="Time" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">8:00AM -- 10:00AM</SelectItem>
+                  <SelectItem value="2">10:00AM -- 12:00PM</SelectItem>
+                  <SelectItem value="3">12:00PM -- 1:00PM</SelectItem>
+                  <SelectItem value="4">2:00PM -- 4:00PM</SelectItem>
+                  <SelectItem value="5">4:00PM -- 6:00PM</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
         <button className="bg-[#5BBAC9] hover:bg-[#48A9B8] duration-100 text-white font-bold text-2xl  p-3 w-[50%] flex justify-center mx-auto my-10 rounded-3xl">

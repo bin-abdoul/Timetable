@@ -13,8 +13,16 @@ export default function SideNav() {
         </div>
         <Separator />
       </div>
-      <div className="">
-        <nav className="list-none flex flex-col gap-5  p-5 h-screen">
+      <Nav />
+    </div>
+  );
+}
+export const Nav = ({ horizontal }: { horizontal?: string })=>{
+  return(
+    <div className="">
+        <nav
+          className={`${horizontal ? "": " flex-col   p-5 h-screen"} gap-5 flex list-none `}
+        >
           <Link to="ReadTimetable">
             <Mybtn pathname="ReadTimetable" unique="1" text="Read Timetable" />
           </Link>
@@ -26,9 +34,9 @@ export default function SideNav() {
           </Link>
         </nav>
       </div>
-    </div>
-  );
+  )
 }
+
 
 const Mybtn = ({
   pathname,
