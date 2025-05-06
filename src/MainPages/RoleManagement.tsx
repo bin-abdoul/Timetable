@@ -4,9 +4,9 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-const [searchQuery, setSearchQuery] = React.useState("");
 
 export default function RoleManagement() {
+  const [searchQuery, setSearchQuery] = React.useState(""); // ✅ useState from import above
   // will be replaced by backend fetch
   const [membersList, setMembersList] = React.useState([
     { id: "user_001", name: "Muhammad Jamil", role: "Admin" },
@@ -72,19 +72,16 @@ export default function RoleManagement() {
       </div>
 
       {membersList
-  .filter((member) =>
-    member.name.toLowerCase().includes(searchQuery)
-  )
-  .map((member, index) => (
-    <Member
-      key={index}
-      id={member.id}
-      name={member.name}
-      role={member.role}
-      onChangeRole={() => handleChangeRoleClick(index)}
-    />
-  ))}
-
+        .filter((member) => member.name.toLowerCase().includes(searchQuery))
+        .map((member, index) => (
+          <Member
+            key={index}
+            id={member.id}
+            name={member.name}
+            role={member.role}
+            onChangeRole={() => handleChangeRoleClick(index)}
+          />
+        ))}
 
       {selectedMemberIndex !== null && (
         <div className="fixed top-0 left-0 right-0 bottom-0 bg-black/30 flex items-center justify-center z-50">

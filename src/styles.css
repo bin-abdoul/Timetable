@@ -111,12 +111,6 @@
   background-color: #f1f5f9;
 }
 @layer components {
-  .poppins {
-    font-family: "Poppins";
-  }
-  .rubik {
-    font-family: "Rubik Puddles";
-  }
   .number::-webkit-inner-spin-button,
   .number::-webkit-outer-spin-button {
     -webkit-appearance: none;
