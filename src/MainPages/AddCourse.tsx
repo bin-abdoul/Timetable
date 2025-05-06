@@ -6,9 +6,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import React from "react";
+import { toast } from "react-toastify";
 
-export default function EditTimetable() {
-  const [formData, setFormData] = React.useState({
+export default function AddCourse() {
+  const [courseData, setCourseData] = React.useState({
     title: "",
     code: "",
     time: "",
@@ -17,122 +18,131 @@ export default function EditTimetable() {
     lecturer: "",
     creditUnit: "",
   });
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setCourseData({ ...courseData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitting:", formData);
+
+    const { title, code, time, day, venue, lecturer, creditUnit } = courseData;
+    if (
+      !title ||
+      !code ||
+      !time ||
+      !day ||
+      !venue ||
+      !lecturer ||
+      !creditUnit
+    ) {
+      toast.error("Please fill out all fields!");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/courses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(courseData),
+      });
+
+      if (!res.ok) throw new Error("Failed to add course");
+
+      toast.success("Course added successfully!");
+      setCourseData({
+        title: "",
+        code: "",
+        time: "",
+        day: "",
+        venue: "",
+        lecturer: "",
+        creditUnit: "",
+      });
+    } catch (err) {
+      console.error(err);
+      toast.error("Error adding course.");
+    }
   };
+
   return (
     <div className="flex flex-col gap-5">
-      <div className="">
-        <h1 className="font-bold text-3xl">Create Subject</h1>
-      </div>
-      <form action="" onSubmit={handleSubmit}>
+      <h1 className="font-bold text-3xl">Create Subject</h1>
+
+      <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-5">
           <Inputs
             title="Course title"
             id="title"
             placeholder="Subject title"
-            value={formData.title}
+            value={courseData.title}
             onChange={handleChange}
           />
-
           <Inputs
             title="Course Code"
             id="code"
             placeholder="Subject Code"
-            value={formData.code}
+            value={courseData.code}
             onChange={handleChange}
           />
           <Inputs
             title="Course Lecturer"
             id="lecturer"
             placeholder="Course Lecturer"
-            value={formData.lecturer}
+            value={courseData.lecturer}
             onChange={handleChange}
           />
-          <Inputs
-            title="Venue"
-            id="venue"
-            placeholder="Subject venue"
-            value={formData.venue}
-            onChange={handleChange}
+          <SelectField
+            label="Venue"
+            placeholder="Venue"
+            value={courseData.venue}
+            options={["Room A", "Room B", "Room C", "Room D", "Room E"]}
+            onChange={(val) => setCourseData({ ...courseData, venue: val })}
           />
-          <div className="">
-            <label htmlFor="" className="font-medium">
-              Credit Unit
-            </label>
-            <Select
-              onValueChange={(val) =>
-                setFormData({ ...formData, creditUnit: val })
-              }
-            >
-              <SelectTrigger className="w-[100%] bg-[#48a9b84f] mt-2">
-                <SelectValue placeholder="Credit Unit" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="0">One</SelectItem>
-                <SelectItem value="1">Two</SelectItem>
-                <SelectItem value="2">Three</SelectItem>
-                <SelectItem value="3">Four</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex gap-5 justify-evenly">
-            <div className="w-full">
-              <label htmlFor="" className="font-medium">
-                Day
-              </label>
-              <Select
-                onValueChange={(val) =>
-                  setFormData({ ...formData, day: val })
-                }
-              >
-                <SelectTrigger className="w-[100%] bg-[#48a9b84f] mt-2">
-                  <SelectValue placeholder="Day" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="0">Monday</SelectItem>
-                  <SelectItem value="1">Tuesday</SelectItem>
-                  <SelectItem value="2">Wednessday</SelectItem>
-                  <SelectItem value="3">Thursday</SelectItem>
-                  <SelectItem value="4">Friday</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="w-full">
-              <label htmlFor="" className="font-medium">
-                Time
-              </label>
-              <Select
-                onValueChange={(val) =>
-                  setFormData({ ...formData, time: val })
-                }
-              >
-                <SelectTrigger className="w-[100%] bg-[#48a9b84f] mt-2">
-                  <SelectValue placeholder="Time" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1">8:00AM -- 10:00AM</SelectItem>
-                  <SelectItem value="2">10:00AM -- 12:00PM</SelectItem>
-                  <SelectItem value="3">12:00PM -- 1:00PM</SelectItem>
-                  <SelectItem value="4">2:00PM -- 4:00PM</SelectItem>
-                  <SelectItem value="5">4:00PM -- 6:00PM</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <SelectField
+            label="Credit Unit"
+            placeholder="Credit Unit"
+            value={courseData.creditUnit}
+            options={["1", "2", "3", "4"]}
+            onChange={(val) =>
+              setCourseData({ ...courseData, creditUnit: val })
+            }
+          />
+          <div className="flex gap-5">
+            <SelectField
+              label="Day"
+              placeholder="Day"
+              value={courseData.day}
+              options={["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]}
+              onChange={(val) => setCourseData({ ...courseData, day: val })}
+            />
+            <SelectField
+              label="Time"
+              placeholder="Time"
+              value={courseData.time}
+              options={[
+                "8:00AM -- 10:00AM",
+                "10:00AM -- 12:00PM",
+                "12:00PM -- 1:00PM",
+                "2:00PM -- 4:00PM",
+                "4:00PM -- 6:00PM",
+              ]}
+              onChange={(val) => setCourseData({ ...courseData, time: val })}
+            />
           </div>
         </div>
-        <button className="bg-[#5BBAC9] hover:bg-[#48A9B8] duration-100 text-white font-bold text-2xl  p-3 w-[50%] flex justify-center mx-auto my-10 rounded-3xl">
+
+        <button
+          type="submit"
+          className="bg-[#5BBAC9] hover:bg-[#48A9B8] duration-100 text-white font-bold text-2xl  p-3 w-[50%] flex justify-center mx-auto my-10 rounded-3xl"
+        >
           Add Course
         </button>
       </form>
     </div>
   );
 }
+
 type InputFieldProps = {
   title: string;
   id: string;
@@ -141,11 +151,12 @@ type InputFieldProps = {
   type?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
+
 const Inputs = ({
   title,
   id,
   placeholder,
-  type,
+  type = "text",
   value,
   onChange,
 }: InputFieldProps) => {
@@ -166,3 +177,34 @@ const Inputs = ({
     </div>
   );
 };
+
+type SelectFieldProps = {
+  label: string;
+  placeholder: string;
+  value: string;
+  options: string[];
+  onChange: (val: string) => void;
+};
+
+const SelectField = ({
+  label,
+  placeholder,
+  options,
+  onChange,
+}: SelectFieldProps) => (
+  <div className="flex flex-col w-full">
+    <label className="font-medium text-lg">{label}</label>
+    <Select onValueChange={onChange}>
+      <SelectTrigger className="w-full bg-[#48a9b84f] mt-2">
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((opt) => (
+          <SelectItem key={opt} value={opt}>
+            {opt}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  </div>
+);

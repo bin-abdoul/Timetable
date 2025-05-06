@@ -1,10 +1,59 @@
-import { Search, User, UserCircle, UserCircle2, UserRound } from "lucide-react";
+import { Search, UserRound } from "lucide-react";
 import React from "react";
-import male from "../assets/male.png";
-import female from "../assets/female.png";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function RoleManagement() {
+  // Simulated member list (will be replaced by backend fetch)
+  const [membersList, setMembersList] = React.useState([
+    { id: "user_001", name: "Sarah Kline", role: "Admin" },
+    { id: "user_002", name: "John Doe", role: "User" },
+  ]);
+
+  const [selectedMemberIndex, setSelectedMemberIndex] = React.useState<
+    number | null
+  >(null);
+
+  // Handling role update
+  const selectedRole = (newRole: string) => {
+    if (selectedMemberIndex === null) return;
+    const selectedUser = membersList[selectedMemberIndex];
+
+    if (selectedUser.role === "Admin") {
+      toast.error("Cannot change role of Admin.");
+      return;
+    }
+
+    const updated = [...membersList];
+    updated[selectedMemberIndex].role = newRole;
+    setMembersList(updated);
+    setSelectedMemberIndex(null);
+
+    fetch(`/api/users/${selectedUser.id}/role`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ role: newRole }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to update role");
+        toast.success("Role updated successfully");
+      })
+      .catch(() => {
+        toast.error("Failed to update role. Please try again.");
+      });
+  };
+
+  const handleChangeRoleClick = (index: number) => {
+    if (membersList[index].role === "Admin") {
+      toast.warning("The Admin role cannot be changed.");
+      return;
+    }
+    setSelectedMemberIndex(index);
+  };
+
   return (
     <div className="flex flex-col gap-5">
       <h1 className="text-3xl font-bold">Members</h1>
@@ -13,28 +62,70 @@ export default function RoleManagement() {
         <input
           type="search"
           placeholder="Search Member"
-          className="text-lg p-2 outline-0"
+          className="text-lg p-2 outline-0 bg-transparent w-full"
         />
       </div>
-      <Member name="Sarah Kline" role="Admin" />
-      <Member name="John Smith" role="Admin" />
-      <Member name="Emily Davis" role="moderator" />
-      <Member name="Michael Johnson" role="User" />
-      <Member name="David Brown" role="User" />
-      <Member name="David Brown" role="User" />
-      <Member name="David Brown" role="User" />
+
+      {membersList.map((member, index) => (
+        <Member
+          key={index}
+          id={member.id}
+          name={member.name}
+          role={member.role}
+          onChangeRole={() => handleChangeRoleClick(index)}
+          // isAdmin={member.role === "Admin"}
+        />
+      ))}
+
+      {selectedMemberIndex !== null && (
+        <div className="fixed top-0 left-0 right-0 bottom-0 bg-black/30 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-xl w-[90%] max-w-md">
+            <h2 className="text-xl font-bold mb-4">Change Role</h2>
+            <div className="flex flex-col gap-3">
+              <button
+                className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-lg"
+                onClick={() => selectedRole("Moderator")}
+              >
+                Moderator
+              </button>
+              <button
+                className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-lg"
+                onClick={() => selectedRole("User")}
+              >
+                User
+              </button>
+              <button
+                className="text-red-500 mt-4"
+                onClick={() => setSelectedMemberIndex(null)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      <ToastContainer />
     </div>
   );
 }
 
-const Member = ({ name, role }: { name: string; role: string }) => {
-  const navigate = useNavigate()
-  function goToUserInfo() {
-   navigate("/userInfo") 
-  }
+type MemberProps = {
+  id: string;
+  name: string;
+  role: string;
+  onChangeRole: () => void;
+};
+
+const Member = ({ id, name, role, onChangeRole }: MemberProps) => {
+  const navigate = useNavigate();
+
+  const goToUserInfo = () => {
+    navigate(`/userInfo/${id}`);
+  };
+
   return (
-    <div className="flex justify-between hover:bg-[#48a9b84f] p-2 rounded-2xl">
-      <div className="flex gap-5" onClick={goToUserInfo}>
+    <div className="flex justify-between hover:bg-[#48a9b84f] p-2 rounded-2xl items-center">
+      <div className="flex gap-5 cursor-pointer" onClick={goToUserInfo}>
         <div className="rounded-full size-16 bg-gray-200 flex">
           <UserRound size={32} className="m-auto" />
         </div>
@@ -43,7 +134,10 @@ const Member = ({ name, role }: { name: string; role: string }) => {
           <span className="text-gray-600">{role}</span>
         </div>
       </div>
-      <button className="bg-[#5BBAC9] hover:bg-[#48A9B8] duration-150 rounded-2xl px-6 h-12 my-auto">
+      <button
+        className="bg-[#5BBAC9] hover:bg-[#48A9B8] duration-150 rounded-2xl px-6 h-12"
+        onClick={onChangeRole}
+      >
         Change role
       </button>
     </div>

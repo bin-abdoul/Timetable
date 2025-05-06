@@ -11,6 +11,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { toast } from "react-toastify";
 import {
   Dialog,
   DialogContent,
@@ -40,6 +41,8 @@ const timetableData = [
     courseTitle: "Intro to Algorithms",
     lecturer: "Dr. Smith",
     venue: "Room A",
+    creditUnit: "2",
+    id: "id",
   },
   {
     day: "Monday",
@@ -48,6 +51,8 @@ const timetableData = [
     courseTitle: "Linear Algebra",
     lecturer: "Prof. Jane",
     venue: "Room B",
+    creditUnit: "1",
+    id: "id",
   },
   {
     day: "Tuesday",
@@ -56,6 +61,8 @@ const timetableData = [
     courseTitle: "Mechanics",
     lecturer: "Dr. Ray",
     venue: "Room C",
+    creditUnit: "3",
+    id: "id",
   },
   {
     day: "Friday",
@@ -64,17 +71,38 @@ const timetableData = [
     courseTitle: "Mechanics",
     lecturer: "Dr. Ray",
     venue: "Room C",
+    creditUnit: "4",
+    id: "id",
+  },
+  {
+    day: "Thursday",
+    timeSlot: "2:00PM -- 4:00PM",
+    courseCode: "PHY104",
+    courseTitle: "Mechanics",
+    lecturer: "Dr. Ray",
+    venue: "Room C",
+    creditUnit: "4",
+    id: "id",
   },
 ];
 export default function ReadTimetable() {
   const [timetable, setTimetable] = useState([]);
 
-  // useEffect(() => {
-  //   fetch("/api/timetable")
-  //     .then((res) => res.json())
-  //     .then((data) => setTimetable(data))
-  //     .catch((err) => console.error("Failed to fetch timetable:", err));
-  // }, []);
+  useEffect(() => {
+    fetch("/api/timetable")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to load timetable");
+        return res.json();
+      })
+      .then((data) => {
+        setTimetable(data);
+        toast.success("Timetable loaded successfully!");
+      })
+      .catch((err) => {
+        console.error(err);
+        toast.error("Error loading timetable.");
+      });
+  }, []);
 
   const getCellData = (day: string, timeSlot: string) => {
     return timetableData.find(
@@ -119,84 +147,149 @@ export default function ReadTimetable() {
 }
 
 const Tdata = ({
+  id,
   courseCode,
   courseTitle,
   lecturer,
   venue,
+  creditUnit,
 }: {
+  id: string; // must be included from MongoDB _id
   courseCode: string;
   courseTitle: string;
   lecturer: string;
   venue: string;
+  creditUnit: string;
 }) => {
+  const [code, setCode] = useState(courseCode);
+  const [title, setTitle] = useState(courseTitle);
+  const [teacher, setTeacher] = useState(lecturer);
+
+  const handleUpdate = async () => {
+    // try {
+    //   const res = await fetch(`https://your-api-url.com/timetable/${id}`, {
+    //     method: "PUT",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({
+    //       courseCode: code,
+    //       courseTitle: title,
+    //       lecturer: teacher,
+    //     }),
+    //   });
+    //   if (res.ok) {
+    //     alert("Updated successfully");
+    //   } else {
+    //     alert("Update failed");
+    //   }
+    // } catch (err) {
+    //   console.error(err);
+    //   alert("Error updating data");
+    // }
+  };
+
+  const handleDelete = async () => {
+    // try {
+    //   const res = await fetch(`https://your-api-url.com/timetable/${id}`, {
+    //     method: "DELETE",
+    //   });
+    //   if (res.ok) {
+    //     alert("Deleted successfully");
+    //     // Optionally trigger a refetch
+    //   } else {
+    //     alert("Delete failed");
+    //   }
+    // } catch (err) {
+    //   console.error(err);
+    //   alert("Error deleting data");
+    // }
+  };
+
   return (
     <div className="border p-2 text-lg text-center flex flex-col gap-2">
       <p className="font-bold flex gap-1 text-blue-600 justify-center">
-        {courseCode} <Star color="orange" fill="red" size={20} />
+        {courseCode} : {creditUnit}
+        <Star color="orange" fill="red" size={20} />
       </p>
       <p className="text-sm font-medium text-red-900">{courseTitle}</p>
       <p className="text-green-800 font-medium text-sm">{lecturer}</p>
       <p className="text-sky-500 font-medium text-sm">{venue}</p>
-      <div className="flex">
-        <button className="px-2 py-1 rounded-lg duration-150">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline">Update</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Edit profile</DialogTitle>
-                <DialogDescription>
-                  Make changes to your profile here. Click save when you're
-                  done.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <label htmlFor="name" className="text-right">
-                    Name
-                  </label>
-                  <Input
-                    id="name"
-                    defaultValue="Pedro Duarte"
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <label htmlFor="username" className="text-right">
-                    Username
-                  </label>
-                  <Input
-                    id="username"
-                    defaultValue="@peduarte"
-                    className="col-span-3"
-                  />
-                </div>
+
+      <div className="flex justify-evenly mt-2">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="text-sm">
+              Update
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Edit Course</DialogTitle>
+              <DialogDescription>
+                Update course information and save changes.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <label htmlFor="code" className="text-right">
+                  Code
+                </label>
+                <Input
+                  id="code"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  className="col-span-3"
+                />
               </div>
-              <DialogFooter>
-                <Button type="submit">Save changes</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </button>
-        <Button variant="destructive">
-          <AlertDialog>
-            <AlertDialogTrigger>Delete</AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the
-                  subject from our servers.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction>Continue</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </Button>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <label htmlFor="title" className="text-right">
+                  Title
+                </label>
+                <Input
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <label htmlFor="lecturer" className="text-right">
+                  Lecturer
+                </label>
+                <Input
+                  id="lecturer"
+                  value={teacher}
+                  onChange={(e) => setTeacher(e.target.value)}
+                  className="col-span-3"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button onClick={handleUpdate}>Save changes</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" className="text-sm">
+              Delete
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will permanently remove the course from your timetable.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDelete}>
+                Confirm Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );

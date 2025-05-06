@@ -18,7 +18,7 @@ export default function App() {
         <Route index element={<ReadTimetable />} />
         <Route path="RoleManagement" element={<RoleManagement />} />
         <Route path="AddCourse" element={<AddCourse />} />
-        <Route path="userInfo" element={<UserInfo />} />
+        <Route path="/userInfo/:userId" element={<UserInfo />} />
         <Route path="ReadTimetable" element={<ReadTimetable />} />
       </Route>
     </Routes>
