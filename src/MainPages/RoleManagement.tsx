@@ -130,7 +130,7 @@ const Member = ({ id, name, role, onChangeRole }: MemberProps) => {
   const navigate = useNavigate();
 
   const goToUserInfo = () => {
-    navigate(`/userinfo/${id}`);
+    navigate(`/dashboard/userinfo/${id}`);
   };
 
   return (

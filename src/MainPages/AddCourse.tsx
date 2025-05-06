@@ -69,7 +69,7 @@ export default function AddCourse() {
 
   return (
     <div className="flex flex-col gap-5">
-      <h1 className="font-bold text-3xl">Create Subject</h1>
+      <h1 className="font-bold text-3xl">Create Course</h1>
 
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-5">

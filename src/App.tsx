@@ -27,7 +27,6 @@ const AuthRoute = () => {
 export default function App() {
   return (
     <Routes>
-
       {/* Auth Stack */}
       <Route element={<AuthRoute />}>
         <Route path="/" element={<Login />} />
@@ -41,6 +40,7 @@ export default function App() {
           <Route path="readtimetable" element={<ReadTimetable />} />
           <Route path="rolemanagement" element={<RoleManagement />} />
           <Route path="addcourse" element={<AddCourse />} />
+
           <Route path="userinfo/:userId" element={<UserInfo />} />
         </Route>
       </Route>
