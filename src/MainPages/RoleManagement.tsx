@@ -4,6 +4,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+const [searchQuery, setSearchQuery] = React.useState("");
 
 export default function RoleManagement() {
   // will be replaced by backend fetch
@@ -65,18 +66,25 @@ export default function RoleManagement() {
           type="search"
           placeholder="Search Member"
           className="text-lg p-2 outline-0 bg-transparent w-full"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value.toLowerCase())}
         />
       </div>
 
-      {membersList.map((member, index) => (
-        <Member
-          key={index}
-          id={member.id}
-          name={member.name}
-          role={member.role}
-          onChangeRole={() => handleChangeRoleClick(index)}
-        />
-      ))}
+      {membersList
+  .filter((member) =>
+    member.name.toLowerCase().includes(searchQuery)
+  )
+  .map((member, index) => (
+    <Member
+      key={index}
+      id={member.id}
+      name={member.name}
+      role={member.role}
+      onChangeRole={() => handleChangeRoleClick(index)}
+    />
+  ))}
+
 
       {selectedMemberIndex !== null && (
         <div className="fixed top-0 left-0 right-0 bottom-0 bg-black/30 flex items-center justify-center z-50">
