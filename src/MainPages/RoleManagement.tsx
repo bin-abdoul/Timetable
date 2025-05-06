@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Search, UserRound } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
@@ -5,10 +6,11 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function RoleManagement() {
-  // Simulated member list (will be replaced by backend fetch)
+  // will be replaced by backend fetch
   const [membersList, setMembersList] = React.useState([
-    { id: "user_001", name: "Sarah Kline", role: "Admin" },
-    { id: "user_002", name: "John Doe", role: "User" },
+    { id: "user_001", name: "Muhammad Jamil", role: "Admin" },
+    { id: "user_002", name: "Ahmad Kabir", role: "Moderator" },
+    { id: "user_003", name: "John Doe", role: "User" },
   ]);
 
   const [selectedMemberIndex, setSelectedMemberIndex] = React.useState<
@@ -73,7 +75,6 @@ export default function RoleManagement() {
           name={member.name}
           role={member.role}
           onChangeRole={() => handleChangeRoleClick(index)}
-          // isAdmin={member.role === "Admin"}
         />
       ))}
 
@@ -124,9 +125,9 @@ const Member = ({ id, name, role, onChangeRole }: MemberProps) => {
   };
 
   return (
-    <div className="flex justify-between hover:bg-[#48a9b84f] p-2 rounded-2xl items-center">
+    <div className="flex justify-between hover:bg-[#48a9b834] p-2 rounded-2xl items-center">
       <div className="flex gap-5 cursor-pointer" onClick={goToUserInfo}>
-        <div className="rounded-full size-16 bg-gray-200 flex">
+        <div className="rounded-full size-12 bg-gray-200 flex">
           <UserRound size={32} className="m-auto" />
         </div>
         <div className="flex flex-col justify-around">
@@ -134,12 +135,9 @@ const Member = ({ id, name, role, onChangeRole }: MemberProps) => {
           <span className="text-gray-600">{role}</span>
         </div>
       </div>
-      <button
-        className="bg-[#5BBAC9] hover:bg-[#48A9B8] duration-150 rounded-2xl px-6 h-12"
-        onClick={onChangeRole}
-      >
+      <Button variant={"outline"} onClick={onChangeRole}>
         Change role
-      </button>
+      </Button>
     </div>
   );
 };

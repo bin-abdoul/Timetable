@@ -11,7 +11,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   Dialog,
   DialogContent,
@@ -33,6 +34,7 @@ const times = [
   "2:00PM -- 4:00PM",
   "4:00PM -- 6:00PM",
 ];
+// replace by backend fetch for testing
 const timetableData = [
   {
     day: "Monday",
@@ -46,6 +48,16 @@ const timetableData = [
   },
   {
     day: "Monday",
+    timeSlot: "4:00PM -- 6:00PM",
+    courseCode: "GST111",
+    courseTitle: "Intro to English I",
+    lecturer: "Dr. Smith",
+    venue: "Room A",
+    creditUnit: "2",
+    id: "id",
+  },
+  {
+    day: "Wednesday",
     timeSlot: "10:00AM -- 12:00PM",
     courseCode: "MTH102",
     courseTitle: "Linear Algebra",
@@ -56,7 +68,7 @@ const timetableData = [
   },
   {
     day: "Tuesday",
-    timeSlot: "2:00PM -- 4:00PM",
+    timeSlot: "12:00PM -- 1:00PM",
     courseCode: "PHY104",
     courseTitle: "Mechanics",
     lecturer: "Dr. Ray",
@@ -86,18 +98,22 @@ const timetableData = [
   },
 ];
 export default function ReadTimetable() {
+  //replaced with timetable for testing purpose
   const [timetable, setTimetable] = useState([]);
 
   useEffect(() => {
     fetch("/api/timetable")
       .then((res) => {
-        if (!res.ok) throw new Error("Failed to load timetable");
-        return res.json();
+        if (!res.ok) {
+          throw new Error("Failed to load timetable");
+          toast.error("Failed to load timetable");
+          return res.json();
+        }
       })
-      .then((data) => {
-        setTimetable(data);
-        toast.success("Timetable loaded successfully!");
-      })
+      // .then((data) => {
+      //   setTimetable(data);
+      //   toast.success("Timetable loaded successfully!");
+      // })
       .catch((err) => {
         console.error(err);
         toast.error("Error loading timetable.");
@@ -105,6 +121,7 @@ export default function ReadTimetable() {
   }, []);
 
   const getCellData = (day: string, timeSlot: string) => {
+    // timetableData used instead of timetable
     return timetableData.find(
       (entry: any) => entry.day === day && entry.timeSlot === timeSlot
     );
@@ -112,10 +129,10 @@ export default function ReadTimetable() {
 
   return (
     <div>
-      <table className="border-2 w-full table-fixed">
+      <table className="border-2 w-full">
         <thead>
           <tr>
-            <th className="border p-2 w-[60px]">DAYS/TIME</th>
+            <th className="border p-2 w-[80px]">DAYS/TIME</th>
             {times.map((time, id) => (
               <th key={id} className="border p-2 w-[100px]">
                 {time}
@@ -142,6 +159,7 @@ export default function ReadTimetable() {
           ))}
         </tbody>
       </table>
+      <ToastContainer />
     </div>
   );
 }
@@ -166,42 +184,41 @@ const Tdata = ({
   const [teacher, setTeacher] = useState(lecturer);
 
   const handleUpdate = async () => {
-    // try {
-    //   const res = await fetch(`https://your-api-url.com/timetable/${id}`, {
-    //     method: "PUT",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({
-    //       courseCode: code,
-    //       courseTitle: title,
-    //       lecturer: teacher,
-    //     }),
-    //   });
-    //   if (res.ok) {
-    //     alert("Updated successfully");
-    //   } else {
-    //     alert("Update failed");
-    //   }
-    // } catch (err) {
-    //   console.error(err);
-    //   alert("Error updating data");
-    // }
+    try {
+      const res = await fetch(`https://your-api-url.com/timetable/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          courseCode: code,
+          courseTitle: title,
+          lecturer: teacher,
+        }),
+      });
+      if (res.ok) {
+        toast.success("Updated successfully");
+      } else {
+        toast.error("Update failed");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error updating data");
+    }
   };
 
   const handleDelete = async () => {
-    // try {
-    //   const res = await fetch(`https://your-api-url.com/timetable/${id}`, {
-    //     method: "DELETE",
-    //   });
-    //   if (res.ok) {
-    //     alert("Deleted successfully");
-    //     // Optionally trigger a refetch
-    //   } else {
-    //     alert("Delete failed");
-    //   }
-    // } catch (err) {
-    //   console.error(err);
-    //   alert("Error deleting data");
-    // }
+    try {
+      const res = await fetch(`https://your-api-url.com/timetable/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        toast.success("Deleted successfully");
+      } else {
+        toast.error("Delete failed");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error deleting data");
+    }
   };
 
   return (
@@ -294,7 +311,6 @@ const Tdata = ({
     </div>
   );
 };
-
 const EmptyCell = () => (
   <div className="border p-2 text-gray-400 text-sm text-center">No Class</div>
 );

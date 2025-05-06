@@ -9,7 +9,7 @@ export default function AdminPage() {
       <div className="hidden lg:block w-[20%]">
         <SideNav />
       </div>
-      <div className="w-[80%] bg-white h-screen overflow-y-auto">
+      <div className="lg:w-[80%] w-full bg-white h-screen overflow-auto">
         <Container />
         <div className="p-5">
           <Outlet />

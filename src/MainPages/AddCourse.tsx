@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -6,7 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import React from "react";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function AddCourse() {
   const [courseData, setCourseData] = React.useState({
@@ -131,14 +133,15 @@ export default function AddCourse() {
             />
           </div>
         </div>
-
-        <button
+        <Button
+          variant={"outline"}
           type="submit"
-          className="bg-[#5BBAC9] hover:bg-[#48A9B8] duration-100 text-white font-bold text-2xl  p-3 w-[50%] flex justify-center mx-auto my-10 rounded-3xl"
+          className="bg-[#5BBAC9] hover:bg-[#48A9B8] duration-100 hover:text-white text-white font-bold text-2xl p-6 flex justify-center mx-auto mt-10"
         >
           Add Course
-        </button>
+        </Button>
       </form>
+      <ToastContainer />
     </div>
   );
 }
@@ -165,13 +168,13 @@ const Inputs = ({
       <label htmlFor={id} className="font-medium text-lg">
         {title}
       </label>
-      <input
+      <Input
         id={id}
         type={type}
         name={id}
         value={value}
         onChange={onChange}
-        className="bg-[#48a9b84f] block p-2 my-2 rounded-2xl outline-1"
+        className="bg-[#48a9b84f]"
         placeholder={placeholder}
       />
     </div>

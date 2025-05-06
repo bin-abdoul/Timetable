@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Box } from "lucide-react";
 import React from "react";
@@ -17,26 +18,27 @@ export default function SideNav() {
     </div>
   );
 }
-export const Nav = ({ horizontal }: { horizontal?: string })=>{
-  return(
+export const Nav = ({ horizontal }: { horizontal?: string }) => {
+  return (
     <div className="">
-        <nav
-          className={`${horizontal ? "": " flex-col   p-5 h-screen"} gap-5 flex list-none `}
-        >
-          <Link to="ReadTimetable">
-            <Mybtn pathname="ReadTimetable" unique="1" text="Read Timetable" />
-          </Link>
-          <Link to="RoleManagement">
-            <Mybtn pathname="RoleManagement" text="Role Management" />
-          </Link>
-          <Link to="AddCourse">
-            <Mybtn pathname="AddCourse" text="Add Course" />
-          </Link>
-        </nav>
-      </div>
-  )
-}
-
+      <nav
+        className={`${
+          horizontal ? "" : " flex-col p-5   h-screen"
+        } gap-5 flex list-none `}
+      >
+        <Link to="ReadTimetable">
+          <Mybtn pathname="ReadTimetable" unique="1" text="Read Timetable" />
+        </Link>
+        <Link to="AddCourse">
+          <Mybtn pathname="AddCourse" text="Add Course" />
+        </Link>
+        <Link to="RoleManagement">
+          <Mybtn pathname="RoleManagement" text="Role Management" />
+        </Link>
+      </nav>
+    </div>
+  );
+};
 
 const Mybtn = ({
   pathname,
@@ -51,14 +53,14 @@ const Mybtn = ({
   const path = location.pathname.split("/")[1];
 
   return (
-    <button
+    <Button variant={"outline"}
       className={`${
         path == pathname || (path == "" && unique)
-          ? "bg-[#5BBAC9] text-white"
+          ? "bg-[#5BBAC9] hover:bg-[#5BBAC9] hover:text-white text-white"
           : "bg-gray-100 hover:bg-gray-200"
-      } p-2 rounded-2xl font-medium  w-[100%]`}
+      } font-medium  w-[100%]`}
     >
       {text}
-    </button>
+    </Button>
   );
 };
