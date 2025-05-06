@@ -26,14 +26,14 @@ export const Nav = ({ horizontal }: { horizontal?: string }) => {
           horizontal ? "" : " flex-col p-5   h-screen"
         } gap-5 flex list-none `}
       >
-        <Link to="ReadTimetable">
-          <Mybtn pathname="ReadTimetable" unique="1" text="Read Timetable" />
+        <Link to="readtimetable">
+          <Mybtn pathname="readtimetable" unique="1" text="Read Timetable" />
         </Link>
-        <Link to="AddCourse">
-          <Mybtn pathname="AddCourse" text="Add Course" />
+        <Link to="addcourse">
+          <Mybtn pathname="addcourse" text="Add Course" />
         </Link>
-        <Link to="RoleManagement">
-          <Mybtn pathname="RoleManagement" text="Role Management" />
+        <Link to="rolemanagement">
+          <Mybtn pathname="rolemanagement" text="Role Management" />
         </Link>
       </nav>
     </div>
@@ -50,12 +50,13 @@ const Mybtn = ({
   unique?: string;
 }) => {
   const location = useLocation();
-  const path = location.pathname.split("/")[1];
+  const path = location.pathname.split("/")[2];
+  const path2 = location.pathname;
 
   return (
     <Button variant={"outline"}
       className={`${
-        path == pathname || (path == "" && unique)
+        path == pathname || (path2 == "/dashboard" && unique)
           ? "bg-[#5BBAC9] hover:bg-[#5BBAC9] hover:text-white text-white"
           : "bg-gray-100 hover:bg-gray-200"
       } font-medium  w-[100%]`}
