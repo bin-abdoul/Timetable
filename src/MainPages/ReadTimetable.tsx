@@ -231,7 +231,7 @@ const Tdata = ({
       <p className="text-green-800 font-medium text-sm">{lecturer}</p>
       <p className="text-sky-500 font-medium text-sm">{venue}</p>
 
-      <div className="flex justify-evenly mt-2">
+      <div className="flex justify-evenly gap-2">
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="outline" className="text-sm">

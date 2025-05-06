@@ -72,7 +72,11 @@ export default function RoleManagement() {
       </div>
 
       {membersList
-        .filter((member) => member.name.toLowerCase().includes(searchQuery))
+        .filter(
+          (member) =>
+            member.name.toLowerCase().includes(searchQuery) ||
+            member.role.toLowerCase().includes(searchQuery)
+        )
         .map((member, index) => (
           <Member
             key={index}
