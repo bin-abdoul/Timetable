@@ -11,7 +11,13 @@ export default function RoleManagement() {
   const [membersList, setMembersList] = React.useState([
     { id: "user_001", name: "Muhammad Jamil", role: "Admin" },
     { id: "user_002", name: "Ahmad Kabir", role: "Moderator" },
-    { id: "user_003", name: "John Doe", role: "User" },
+    { id: "user_003", name: "Salim Abba", role: "User" },
+    { id: "user_004", name: "Ishaq Musa", role: "user" },
+    { id: "user_005", name: "Aliyu Yunus", role: "user" },
+    { id: "user_006", name: "Mukhtar Sulaiman", role: "user" },
+    { id: "user_007", name: "Abubakar Jaguar", role: "user" },
+    { id: "user_008", name: "Adam Yusuf", role: "Moderator" },
+    { id: "user_009", name: "Jibril Jega", role: "user" },
   ]);
 
   const [selectedMemberIndex, setSelectedMemberIndex] = React.useState<
@@ -33,20 +39,20 @@ export default function RoleManagement() {
     setMembersList(updated);
     setSelectedMemberIndex(null);
 
-    fetch(`/api/users/${selectedUser.id}/role`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ role: newRole }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to update role");
-        toast.success("Role updated successfully");
-      })
-      .catch(() => {
-        toast.error("Failed to update role. Please try again.");
-      });
+    // fetch(`/api/users/${selectedUser.id}/role`, {
+    //   method: "PATCH",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ role: newRole }),
+    // })
+    //   .then((res) => {
+    //     if (!res.ok) throw new Error("Failed to update role");
+    //     toast.success("Role updated successfully");
+    //   })
+    //   .catch(() => {
+    //     toast.error("Failed to update role. Please try again.");
+    //   });
   };
 
   const handleChangeRoleClick = (index: number) => {

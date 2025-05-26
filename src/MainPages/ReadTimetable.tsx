@@ -101,24 +101,24 @@ export default function ReadTimetable() {
   //replaced with timetable for testing purpose
   const [timetable, setTimetable] = useState([]);
 
-  useEffect(() => {
-    fetch("/api/timetable")
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to load timetable");
-          toast.error("Failed to load timetable");
-          return res.json();
-        }
-      })
+  // useEffect(() => {
+    // fetch("/api/timetable")
+    //   .then((res) => {
+    //     if (!res.ok) {
+    //       throw new Error("Failed to load timetable");
+    //       toast.error("Failed to load timetable");
+    //       return res.json();
+    //     }
+    //   })
       // .then((data) => {
       //   setTimetable(data);
       //   toast.success("Timetable loaded successfully!");
       // })
-      .catch((err) => {
-        console.error(err);
-        toast.error("Error loading timetable.");
-      });
-  }, []);
+  //     .catch((err) => {
+  //       console.error(err);
+  //       toast.error("Error loading timetable.");
+  //     });
+  // }, []);
 
   const getCellData = (day: string, timeSlot: string) => {
     // timetableData used instead of timetable
@@ -184,41 +184,41 @@ const Tdata = ({
   const [teacher, setTeacher] = useState(lecturer);
 
   const handleUpdate = async () => {
-    try {
-      const res = await fetch(`https://your-api-url.com/timetable/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          courseCode: code,
-          courseTitle: title,
-          lecturer: teacher,
-        }),
-      });
-      if (res.ok) {
-        toast.success("Updated successfully");
-      } else {
-        toast.error("Update failed");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Error updating data");
-    }
+    // try {
+    //   const res = await fetch(`https://your-api-url.com/timetable/${id}`, {
+    //     method: "PUT",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({
+    //       courseCode: code,
+    //       courseTitle: title,
+    //       lecturer: teacher,
+    //     }),
+    //   });
+    //   if (res.ok) {
+    //     toast.success("Updated successfully");
+    //   } else {
+    //     toast.error("Update failed");
+    //   }
+    // } catch (err) {
+    //   console.error(err);
+    //   toast.error("Error updating data");
+    // }
   };
 
   const handleDelete = async () => {
-    try {
-      const res = await fetch(`https://your-api-url.com/timetable/${id}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        toast.success("Deleted successfully");
-      } else {
-        toast.error("Delete failed");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Error deleting data");
-    }
+    // try {
+    //   const res = await fetch(`https://your-api-url.com/timetable/${id}`, {
+    //     method: "DELETE",
+    //   });
+    //   if (res.ok) {
+    //     toast.success("Deleted successfully");
+    //   } else {
+    //     toast.error("Delete failed");
+    //   }
+    // } catch (err) {
+    //   console.error(err);
+    //   toast.error("Error deleting data");
+    // }
   };
 
   return (

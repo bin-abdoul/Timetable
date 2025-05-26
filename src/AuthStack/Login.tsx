@@ -33,26 +33,26 @@ export default function Login() {
       return;
     }
 
-    try {
-      const response = await fetch("https://your-backend-url.com/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+  //   try {
+  //     const response = await fetch("https://your-backend-url.com/api/login", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(formData),
+  //     });
 
-      if (!response.ok) {
-        throw new Error("Invalid user credentials");
-      }
+  //     if (!response.ok) {
+  //       throw new Error("Invalid user credentials");
+  //     }
 
-      const data = await response.json();
-      localStorage.setItem("token", data.token);
-      toast.success("Login successful");
-      navigate("/dashboard");
-    } catch (err: any) {
-      toast.error(err.message || "Login failed");
-    }
+  //     const data = await response.json();
+  //     localStorage.setItem("token", data.token);
+  //     toast.success("Login successful");
+  //     navigate("/dashboard");
+  //   } catch (err: any) {
+  //     toast.error(err.message || "Login failed");
+  //   }
   };
 
   return (

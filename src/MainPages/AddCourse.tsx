@@ -42,29 +42,29 @@ export default function AddCourse() {
       return;
     }
 
-    try {
-      const res = await fetch("/api/courses", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(courseData),
-      });
+    // try {
+    //   const res = await fetch("/api/courses", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify(courseData),
+    //   });
 
-      if (!res.ok) throw new Error("Failed to add course");
+    //   if (!res.ok) throw new Error("Failed to add course");
 
-      toast.success("Course added successfully!");
-      setCourseData({
-        title: "",
-        code: "",
-        time: "",
-        day: "",
-        venue: "",
-        lecturer: "",
-        creditUnit: "",
-      });
-    } catch (err) {
-      console.error(err);
-      toast.error("Error adding course.");
-    }
+    //   toast.success("Course added successfully!");
+    //   setCourseData({
+    //     title: "",
+    //     code: "",
+    //     time: "",
+    //     day: "",
+    //     venue: "",
+    //     lecturer: "",
+    //     creditUnit: "",
+    //   });
+    // } catch (err) {
+    //   console.error(err);
+    //   toast.error("Error adding course.");
+    // }
   };
 
   return (
