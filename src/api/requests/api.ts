@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-// const backendUrl = "https://timetableapi-b4hq.onrender.com";
-const backendUrl = "http://localhost:3000";
+const backendUrl = "https://timetableapi-b4hq.onrender.com";
+// const backendUrl = "http://localhost:3000";
 
 
 
