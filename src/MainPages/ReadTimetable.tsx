@@ -1,3 +1,8 @@
+import {
+  useViewTimetableQuery,
+  useDeleteSubjectMutation,
+  useUpdateSubjectMutation,
+} from "@/api/requests/subjects.request";
 import { useEffect, useState } from "react";
 import { Star } from "lucide-react";
 import {
@@ -20,112 +25,54 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger, 
 } from "@/components/ui/dialog";
-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const times = [
-  "8:00AM -- 10:00AM",
-  "10:00AM -- 12:00PM",
-  "12:00PM -- 1:00PM",
-  "2:00PM -- 4:00PM",
-  "4:00PM -- 6:00PM",
+  "8:00 -- 10:00",
+  "10:00 -- 12:00",
+  "12:00 -- 1:00",
+  "2:00 -- 4:00",
+  "4:00 -- 6:00",
 ];
-// replace by backend fetch for testing
-const timetableData = [
-  {
-    day: "Monday",
-    timeSlot: "8:00AM -- 10:00AM",
-    courseCode: "CSC101",
-    courseTitle: "Intro to Algorithms",
-    lecturer: "Dr. Smith",
-    venue: "Room A",
-    creditUnit: "2",
-    id: "id",
-  },
-  {
-    day: "Monday",
-    timeSlot: "4:00PM -- 6:00PM",
-    courseCode: "GST111",
-    courseTitle: "Intro to English I",
-    lecturer: "Dr. Smith",
-    venue: "Room A",
-    creditUnit: "2",
-    id: "id",
-  },
-  {
-    day: "Wednesday",
-    timeSlot: "10:00AM -- 12:00PM",
-    courseCode: "MTH102",
-    courseTitle: "Linear Algebra",
-    lecturer: "Prof. Jane",
-    venue: "Room B",
-    creditUnit: "1",
-    id: "id",
-  },
-  {
-    day: "Tuesday",
-    timeSlot: "12:00PM -- 1:00PM",
-    courseCode: "PHY104",
-    courseTitle: "Mechanics",
-    lecturer: "Dr. Ray",
-    venue: "Room C",
-    creditUnit: "3",
-    id: "id",
-  },
-  {
-    day: "Friday",
-    timeSlot: "8:00AM -- 10:00AM",
-    courseCode: "PHY104",
-    courseTitle: "Mechanics",
-    lecturer: "Dr. Ray",
-    venue: "Room C",
-    creditUnit: "4",
-    id: "id",
-  },
-  {
-    day: "Thursday",
-    timeSlot: "2:00PM -- 4:00PM",
-    courseCode: "PHY104",
-    courseTitle: "Mechanics",
-    lecturer: "Dr. Ray",
-    venue: "Room C",
-    creditUnit: "4",
-    id: "id",
-  },
-];
+
+interface TimetableEntry {
+  day: string;
+  time: string;
+  _id: string;
+  courseCode: string;
+  subjectName: string;
+  courseLecturer: string;
+  subjectVenue: string;
+  creditUnit: string;
+}
+
+interface UpdateSubjectPayload {
+  id: string;
+  courseCode: string;
+  subjectName: string;
+  courseLecturer: string;
+}
+
 export default function ReadTimetable() {
-  //replaced with timetable for testing purpose
-  const [timetable, setTimetable] = useState([]);
 
-  // useEffect(() => {
-    // fetch("/api/timetable")
-    //   .then((res) => {
-    //     if (!res.ok) {
-    //       throw new Error("Failed to load timetable");
-    //       toast.error("Failed to load timetable");
-    //       return res.json();
-    //     }
-    //   })
-      // .then((data) => {
-      //   setTimetable(data);
-      //   toast.success("Timetable loaded successfully!");
-      // })
-  //     .catch((err) => {
-  //       console.error(err);
-  //       toast.error("Error loading timetable.");
-  //     });
-  // }, []);
+  const { data: timetableData, isLoading, error } = useViewTimetableQuery();
+  const [updateSubject] = useUpdateSubjectMutation();
+  const [deleteSubject] = useDeleteSubjectMutation();
+  
 
-  const getCellData = (day: string, timeSlot: string) => {
-    // timetableData used instead of timetable
+  const getCellData = (day: string, timeSlot: string): TimetableEntry | null => {
+    if (!timetableData || !Array.isArray(timetableData)) return null;
     return timetableData.find(
-      (entry: any) => entry.day === day && entry.timeSlot === timeSlot
-    );
+      (entry: TimetableEntry) => entry.day === day && entry.time === timeSlot
+    ) || null;
   };
+
+  if (isLoading) return <div>Loading timetable...</div>;
+  if (error) return <div>Error loading timetable</div>;
 
   return (
     <div>
@@ -151,7 +98,16 @@ export default function ReadTimetable() {
                     key={timeId}
                     className="w-[100px] border align-top overflow-y-auto"
                   >
-                    {cell ? <Tdata {...cell} /> : <EmptyCell />}
+                    {cell ? (
+                      <Tdata
+                        {...cell}
+                        // userRole={userRole}
+                        updateSubject={updateSubject}
+                        deleteSubject={deleteSubject}
+                      />
+                    ) : (
+                      <EmptyCell />
+                    )}
                   </td>
                 );
               })}
@@ -164,61 +120,67 @@ export default function ReadTimetable() {
   );
 }
 
-const Tdata = ({
-  id,
-  courseCode,
-  courseTitle,
-  lecturer,
-  venue,
-  creditUnit,
-}: {
-  id: string; // must be included from MongoDB _id
+interface TdataProps {
+  _id: string;
   courseCode: string;
-  courseTitle: string;
-  lecturer: string;
-  venue: string;
+  subjectName: string;
+  courseLecturer: string;
+  subjectVenue: string;
   creditUnit: string;
-}) => {
+  // userRole: string;
+  day: string;
+  time: string;
+  updateSubject: (data: UpdateSubjectPayload) => { unwrap: () => Promise<any> };
+  deleteSubject: (id: string) => { unwrap: () => Promise<any> };
+}
+
+const Tdata = ({
+  _id,
+  courseCode,
+  subjectName,
+  courseLecturer,
+  subjectVenue,
+  creditUnit,
+  // userRole,
+  updateSubject,
+  deleteSubject,
+}: TdataProps) => {
   const [code, setCode] = useState(courseCode);
-  const [title, setTitle] = useState(courseTitle);
-  const [teacher, setTeacher] = useState(lecturer);
+  const [title, setTitle] = useState(subjectName);
+  const [teacher, setTeacher] = useState(courseLecturer);
+  const [isUpdateOpen, setIsUpdateOpen] = useState(false);
+
+  useEffect(() => {
+    setCode(courseCode);
+    setTitle(subjectName);
+    setTeacher(courseLecturer);
+  }, [courseCode, subjectName, courseLecturer]);
 
   const handleUpdate = async () => {
-    // try {
-    //   const res = await fetch(`https://your-api-url.com/timetable/${id}`, {
-    //     method: "PUT",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({
-    //       courseCode: code,
-    //       courseTitle: title,
-    //       lecturer: teacher,
-    //     }),
-    //   });
-    //   if (res.ok) {
-    //     toast.success("Updated successfully");
-    //   } else {
-    //     toast.error("Update failed");
-    //   }
-    // } catch (err) {
-    //   console.error(err);
-    //   toast.error("Error updating data");
-    // }
+    try {
+      await updateSubject({
+        id: _id,
+        courseCode: code,
+        subjectName: title,
+        courseLecturer: teacher,
+      }).unwrap();
+
+      toast.success("Course updated successfully!");
+      setIsUpdateOpen(false);
+    } catch (error) {
+      toast.error("Failed to update course");
+      console.error("Update error:", error);
+    }
   };
 
   const handleDelete = async () => {
-    // try {
-    //   const res = await fetch(`https://your-api-url.com/timetable/${id}`, {
-    //     method: "DELETE",
-    //   });
-    //   if (res.ok) {
-    //     toast.success("Deleted successfully");
-    //   } else {
-    //     toast.error("Delete failed");
-    //   }
-    // } catch (err) {
-    //   console.error(err);
-    //   toast.error("Error deleting data");
-    // }
+    try {
+      await deleteSubject(_id).unwrap();
+      toast.success("Course deleted successfully!");
+    } catch (error) {
+      toast.error("Failed to delete course");
+      console.log("Delete error:", error);
+    }
   };
 
   return (
@@ -227,12 +189,12 @@ const Tdata = ({
         {courseCode} : {creditUnit}
         <Star color="orange" fill="red" size={20} />
       </p>
-      <p className="text-sm font-medium text-red-900">{courseTitle}</p>
-      <p className="text-green-800 font-medium text-sm">{lecturer}</p>
-      <p className="text-sky-500 font-medium text-sm">{venue}</p>
-
+      <p className="text-sm font-medium text-red-900">{subjectName}</p>
+      <p className="text-green-800 font-medium text-sm">{courseLecturer}</p>
+      <p className="text-sky-500 font-medium text-sm">{subjectVenue}</p>
+      {/* {userRole !== 'user' && ( */}
       <div className="flex justify-evenly gap-2">
-        <Dialog>
+        <Dialog open={isUpdateOpen} onOpenChange={setIsUpdateOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" className="text-sm">
               Update
@@ -281,6 +243,9 @@ const Tdata = ({
               </div>
             </div>
             <DialogFooter>
+              <Button variant="outline" onClick={() => setIsUpdateOpen(false)}>
+                Cancel
+              </Button>
               <Button onClick={handleUpdate}>Save changes</Button>
             </DialogFooter>
           </DialogContent>
@@ -308,9 +273,11 @@ const Tdata = ({
           </AlertDialogContent>
         </AlertDialog>
       </div>
+      {/* )} */}
     </div>
   );
 };
+
 const EmptyCell = () => (
   <div className="border p-2 text-gray-400 text-sm text-center">No Class</div>
 );

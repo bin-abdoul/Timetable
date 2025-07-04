@@ -1,102 +1,68 @@
-//   
-
-
 import { Calendar, House, MailOpen, Phone, Venus } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
 import male from "../assets/male.png";
 import female from "../assets/female.png";
-
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  gender: "Male" | "Female";
-  age: number;
-  dob: string;
-  phone: string;
-  address: string;
-};
+import { useUserInfoQuery } from "@/api/requests/auth.request";
 
 export default function UserInfo() {
   const { userId } = useParams();
-  const [user, setUser] = useState<User | null>(null);
-  const [error, setError] = useState("");
 
-  // MOCK data for testing
-  useEffect(() => {
-    const mockUsers: Record<string, User> = {
-      user_001: {
-        id: "user_001",
-        name: "Muhammad Jamil",
-        email: "muhdjamil@example.com",
-        role: "Admin",
-        gender: "Male",
-        age: 28,
-        dob: "1996-02-14",
-        phone: "+1 555 123 4567",
-        address: "123 Main St, Springfield",
-      },
-      user_002: {
-        id: "user_002",
-        name: "Ahmad Kabir",
-        email: "ahmadkb@example.com",
-        role: "Moderator",
-        gender: "Male",
-        age: 32,
-        dob: "1992-06-05",
-        phone: "+1 555 987 6543",
-        address: "456 Maple Ave, Shelbyville",
-      },
-      user_003: {
-        id: "user_002",
-        name: "John Doe",
-        email: "john.doe@example.com",
-        role: "User",
-        gender: "Male",
-        age: 32,
-        dob: "1992-06-05",
-        phone: "+1 555 987 6543",
-        address: "456 Maple Ave, Shelbyville",
-      },
-    };
+  const { data: user, isLoading, error } = useUserInfoQuery(userId!);
 
-    // Simulate API delay
-    setTimeout(() => {
-      const foundUser = userId ? mockUsers[userId] : null;
-      setUser(foundUser || null);
-    }, 500);
-  }, [userId]);
-//   useEffect(() => {
-//     if (!userId) return;
+  const calculateAge = (dob: string) => {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();  
+    
+    return age;
+  };
 
-//     fetch(`/api/users/${userId}`)
-//       .then((res) => {
-//         if (!res.ok) throw new Error("Failed to fetch user details");
-//         return res.json();
-//       })
-//       .then((data) => {
-//         setUser(data);
-//       })
-//       .catch((err) => {
-//         console.error(err);
-//         setError("Unable to load user info.");
-//       });
-//   }, [userId]);
+  if (!userId) {
+    return (
+      <div className="flex justify-center items-center min-h-64">
+        <div className="text-red-500">No user ID provided in the URL</div>
+      </div>
+    );
+  }
 
-//   if (error) return <div className="text-red-600">{error}</div>;
-  if (!user) return <div>Loading user data...</div>;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-64">
+        <div>Loading user data...</div>
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-64">
+        <div className="text-red-500">
+          <p>Error loading user data</p>
+          <pre className="text-sm mt-2">{JSON.stringify(error, null, 2)}</pre>
+        </div>
+      </div>
+    );
+  }
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center min-h-64">
+        <div>No user data found</div>
+      </div>
+    );
+  }
+  const fullName = `${user.firstName} ${user.surName}`;
+  const age = calculateAge(user.dob);
+  const formattedDob = user.dob;
   return (
     <div className="flex flex-col font-medium gap-5">
       <div className="flex gap-5">
         <img
-          src={user.gender === "Female" ? female : male}
+          src={user.gender === "female" ? female : male}
           alt="user"
           className="rounded-full size-20"
         />
         <div className="my-auto flex flex-col justify-evenly">
-          <p className="font-semibold text-xl">{user.name}</p>
+          <p className="font-semibold text-xl">{fullName}</p>
           <p className="capitalize">{user.role}</p>
           <p>{user.email}</p>
         </div>
@@ -107,15 +73,15 @@ export default function UserInfo() {
           <Info
             icon={<Venus />}
             title="Gender"
-            data={`${user.gender}, ${user.age}`}
+            data={`${user.gender}, ${age} years old`}
           />
-          <Info icon={<Calendar />} title="Date of Birth" data={user.dob} />
+          <Info icon={<Calendar />} title="Date of Birth" data={formattedDob} />
         </div>
         <div className="flex flex-col gap-3">
           <h1 className="font-bold text-xl">Contact Information</h1>
           <Info icon={<MailOpen />} title="Email Address" data={user.email} />
-          <Info icon={<Phone />} title="Phone" data={user.phone} />
-          <Info icon={<House />} title="Mailing Address" data={user.address} />
+          <Info icon={<Phone />} title="Phone" data={user.phoneNumber} />
+          <Info icon={<House />} title="Mailing Address" data={user.homeAddress} />
         </div>
       </div>
     </div>
@@ -135,8 +101,8 @@ const Info = ({
     <div className="flex gap-3">
       <p className="bg-gray-200 p-3 rounded-lg">{icon}</p>
       <div>
-        <p>{title}</p>
-        <p>{data}</p>
+        <p className="font-medium text-gray-600">{title}</p>
+        <p className="text-gray-900">{data}</p>
       </div>
     </div>
   );

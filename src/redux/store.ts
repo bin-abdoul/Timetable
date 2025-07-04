@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import userSlice from "./userSlice";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import {api} from "@/api/requests/api"
 
 const persistConfig = {
   key: "root",
@@ -12,13 +13,14 @@ const persistedReducer = persistReducer(persistConfig, userSlice);
 const store = configureStore({
   reducer: {
     persistedReducer,
-  }, // We'll add reducers here later
+    api : api.reducer,
+  },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
       },
-    }),
+    }).concat(api.middleware),
 });
 
 export const persistor = persistStore(store);

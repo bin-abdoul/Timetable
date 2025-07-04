@@ -6,6 +6,7 @@ import logo from "../assets/Logo.png";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useLoginMutation } from "@/api/requests/auth.request";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -13,46 +14,41 @@ export default function Login() {
     email: "",
     password: "",
   });
+  const [login] = useLoginMutation();
 
-  const validateForm = (data: typeof formData) => {
-    if (!data.email || !data.password) {
-      return "Fill all fields";
-    }
+  const validateForm = () => {
+    const { email, password } = formData;
+    if (!email || !password) return "Fill all fields";
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(data.email)) {
-      return "Input a valid email";
-    }
+    if (!emailRegex.test(email)) return "Input a valid email";
     return null;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const validationError = validateForm(formData);
-    if (validationError) {
-      toast.error(validationError);
+    const error = validateForm();
+    if (error) {
+      toast.error(error);
       return;
     }
 
-  //   try {
-  //     const response = await fetch("https://your-backend-url.com/api/login", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(formData),
-  //     });
+    login({
+      email: formData.email,
+      password: formData.password,
+    })
+      .unwrap()
+      .then((data:any) => {
+        toast.success("Logged in successfully");
+        console.log("Login Successful:", data);
 
-  //     if (!response.ok) {
-  //       throw new Error("Invalid user credentials");
-  //     }
-
-  //     const data = await response.json();
-  //     localStorage.setItem("token", data.token);
-  //     toast.success("Login successful");
-  //     navigate("/dashboard");
-  //   } catch (err: any) {
-  //     toast.error(err.message || "Login failed");
-  //   }
+        localStorage.setItem("token", data.data.accessToken); 
+        localStorage.setItem("user", JSON.stringify(data.data.user)); 
+        navigate("/dashboard");
+      })
+      .catch((error) => {
+        console.log("Login error:", JSON.stringify(error, null, 2));
+        toast.error(error.data?.error || "An error occurred");
+      });
   };
 
   return (
@@ -97,7 +93,7 @@ export default function Login() {
             <span className="text-gray-500">No Account? </span>
             <span
               className="text-[#5BBAC9] hover:text-[#48A9B8] font-semibold cursor-pointer hover:underline transition-colors duration-200"
-              onClick={() => navigate("/SignUp")}
+              onClick={() => navigate("/Signup")}
             >
               Create One
             </span>

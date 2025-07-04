@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAddSubjectMutation } from "@/api/requests/subjects.request";
 import {
   Select,
   SelectContent,
@@ -12,59 +13,56 @@ import { toast, ToastContainer } from "react-toastify";
 
 export default function AddCourse() {
   const [courseData, setCourseData] = React.useState({
-    title: "",
-    code: "",
-    time: "",
-    day: "",
-    venue: "",
-    lecturer: "",
+    courseCode: "",
     creditUnit: "",
+    day: "",
+    courseLecturer: "",
+    time: "",
+    subjectName: "",
+    subjectVenue: "",
   });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCourseData({ ...courseData, [e.target.name]: e.target.value });
-  };
+  const [addCourse] = useAddSubjectMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const { title, code, time, day, venue, lecturer, creditUnit } = courseData;
     if (
-      !title ||
-      !code ||
-      !time ||
-      !day ||
-      !venue ||
-      !lecturer ||
-      !creditUnit
+      !courseData.subjectName ||
+      !courseData.courseCode ||
+      !courseData.courseLecturer ||
+      !courseData.time ||
+      !courseData.day ||
+      !courseData.subjectVenue ||
+      !courseData.creditUnit
     ) {
       toast.error("Please fill out all fields!");
       return;
     }
 
-    // try {
-    //   const res = await fetch("/api/courses", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(courseData),
-    //   });
+    try {
+      await addCourse({
+        subjectName: courseData.subjectName,
+        courseCode: courseData.courseCode,
+        courseLecturer: courseData.courseLecturer,
+        subjectVenue: courseData.subjectVenue,
+        creditUnit: courseData.creditUnit,
+        day: courseData.day,
+        time: courseData.time,
+      }).unwrap();
+      toast.success("Course added successfully!");
+    } catch (error) {
+      toast.error("Failed to add course");
+      console.log("Error adding course:", JSON.stringify(error, null, 2));
+    }
 
-    //   if (!res.ok) throw new Error("Failed to add course");
-
-    //   toast.success("Course added successfully!");
-    //   setCourseData({
-    //     title: "",
-    //     code: "",
-    //     time: "",
-    //     day: "",
-    //     venue: "",
-    //     lecturer: "",
-    //     creditUnit: "",
-    //   });
-    // } catch (err) {
-    //   console.error(err);
-    //   toast.error("Error adding course.");
-    // }
+    setCourseData({
+      subjectName: "",
+      courseCode: "",
+      courseLecturer: "",
+      subjectVenue: "",
+      creditUnit: "",
+      day: "",
+      time: "",
+    });
   };
 
   return (
@@ -77,35 +75,40 @@ export default function AddCourse() {
             title="Course title"
             id="title"
             placeholder="Subject title"
-            value={courseData.title}
-            onChange={handleChange}
+            value={courseData.subjectName}
+            onChange={(e) =>
+              setCourseData({ ...courseData, subjectName: e.target.value })}
           />
           <Inputs
             title="Course Code"
             id="code"
             placeholder="Subject Code"
-            value={courseData.code}
-            onChange={handleChange}
+            value={courseData.courseCode}
+            onChange={(e) =>
+              setCourseData({ ...courseData, courseCode: e.target.value })}
           />
           <Inputs
             title="Course Lecturer"
             id="lecturer"
             placeholder="Course Lecturer"
-            value={courseData.lecturer}
-            onChange={handleChange}
+            value={courseData.courseLecturer}
+            onChange={(e) =>
+              setCourseData({ ...courseData, courseLecturer: e.target.value })}
           />
           <SelectField
             label="Venue"
             placeholder="Venue"
-            value={courseData.venue}
+            value={courseData.subjectVenue}
             options={["Room A", "Room B", "Room C", "Room D", "Room E"]}
-            onChange={(val) => setCourseData({ ...courseData, venue: val })}
+            onChange={(val) =>
+              setCourseData({ ...courseData, subjectVenue: val })
+            }
           />
           <SelectField
             label="Credit Unit"
             placeholder="Credit Unit"
             value={courseData.creditUnit}
-            options={["1", "2", "3", "4"]}
+            options={["one", "two", "three", "four"]}
             onChange={(val) =>
               setCourseData({ ...courseData, creditUnit: val })
             }
@@ -123,11 +126,11 @@ export default function AddCourse() {
               placeholder="Time"
               value={courseData.time}
               options={[
-                "8:00AM -- 10:00AM",
-                "10:00AM -- 12:00PM",
-                "12:00PM -- 1:00PM",
-                "2:00PM -- 4:00PM",
-                "4:00PM -- 6:00PM",
+                "8:00 -- 10:00",
+                "10:00 -- 12:00",
+                "12:00 -- 1:00",
+                "2:00 -- 4:00",
+                "4:00 -- 6:00",
               ]}
               onChange={(val) => setCourseData({ ...courseData, time: val })}
             />
@@ -192,12 +195,13 @@ type SelectFieldProps = {
 const SelectField = ({
   label,
   placeholder,
+  value,
   options,
   onChange,
 }: SelectFieldProps) => (
   <div className="flex flex-col w-full">
     <label className="font-medium text-lg">{label}</label>
-    <Select onValueChange={onChange}>
+    <Select onValueChange={onChange} value={value}>
       <SelectTrigger className="w-full bg-[#48a9b84f] mt-2">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>

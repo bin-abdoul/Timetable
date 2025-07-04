@@ -8,44 +8,63 @@ import ReadTimetable from "./MainPages/ReadTimetable";
 import AdminPage from "./MainPages/AdminPage";
 import AddCourse from "./MainPages/AddCourse";
 
-// Dummy auth function (replace with real logic using context/JWT/localStorage)
+
 const isAuthenticated = () => {
   const token = localStorage.getItem("token");
-  return !!token; // check if token exists
+  if (!token) return false;
+  
+  
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const currentTime = Date.now() / 1000;
+    if (payload.exp && payload.exp < currentTime) {
+      localStorage.removeItem("token");
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.error("Invalid token format:", error);
+    localStorage.removeItem("token");
+    return false;
+  }
 };
 
-// PrivateRoute: blocks unauthenticated access
+export const logout = () => {
+  localStorage.removeItem("token");
+  window.location.href = "/"; // Redirect to login
+};
+
 const PrivateRoute = () => {
   return isAuthenticated() ? <Outlet /> : <Navigate to="/" replace />;
 };
 
-// AuthRoute: prevents access to login/signup if already authenticated
 const AuthRoute = () => {
   return isAuthenticated() ? <Navigate to="/dashboard" replace /> : <Outlet />;
 };
 
 export default function App() {
+  
+  React.useEffect(() => {
+    isAuthenticated();
+  }, []);
+
   return (
     <Routes>
-      {/* Auth Stack */}
-      <Route element={<AuthRoute />}>
+    <Route element={<AuthRoute />}>
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
       </Route>
 
-      {/* Protected Main Pages */}
       <Route element={<PrivateRoute />}>
         <Route path="/dashboard" element={<AdminPage />}>
           <Route index element={<ReadTimetable />} />
           <Route path="readtimetable" element={<ReadTimetable />} />
           <Route path="rolemanagement" element={<RoleManagement />} />
           <Route path="addcourse" element={<AddCourse />} />
-
           <Route path="userinfo/:userId" element={<UserInfo />} />
         </Route>
       </Route>
 
-      {/* Fallback for unmatched routes */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
