@@ -3,6 +3,7 @@ import userSlice from "./userSlice";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import {api} from "@/api/requests/api"
+import { setupListeners } from "@reduxjs/toolkit/query";
 
 const persistConfig = {
   key: "root",
@@ -22,6 +23,7 @@ const store = configureStore({
       },
     }).concat(api.middleware),
 });
+setupListeners(store.dispatch);
 
 export const persistor = persistStore(store);
 export default store;
