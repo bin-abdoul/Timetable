@@ -32,7 +32,10 @@ interface User {
 
 export default function RoleManagement() {
   const [searchQuery, setSearchQuery] = React.useState("");
-  const { data: membersList, isLoading, error } = useUsersListQuery();
+  const { data: membersList, isLoading, error } = useUsersListQuery(undefined, {
+  refetchOnMountOrArgChange: true,
+  refetchOnFocus: true,
+});
   const [updateUserRole, { isLoading: isUpdating }] =
     useUpdateUserRoleMutation();
 
